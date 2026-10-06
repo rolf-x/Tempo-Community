@@ -1,0 +1,27 @@
+node_modules/
+dist/
+.vite/
+coverage/
+.vercel/
+.env
+.env.*
+*.local
+.DS_Store
+*.log
+.vercel
+.env*
+
+# Local Claude Code MCP config (tooling, not project code)
+.mcp.json
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Supabase CLI link state (project ref, versions): local only
+supabase/.temp/
+
+# Secrets written by scripts/setup/github-app.mjs: never commit
+.tempo-setup/
+
+# The settings template is safe to commit (names only); keep this line last
+!.env.example

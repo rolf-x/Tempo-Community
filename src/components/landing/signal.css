@@ -1,0 +1,445 @@
+@import url('https://cdn.jsdelivr.net/npm/inter-ui@4/inter-variable.css');
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&display=swap');
+
+/* Landing-only Signal treatments. The app owns the semantic surface/text palette. */
+.signal-landing {
+  --landing-pill-bg: #ffffff;
+  --landing-pill-ink: #08090b;
+  --landing-data: #22d3ee;
+  --landing-beat-start: #7c7cff;
+  --landing-glow-a: rgba(124,124,255,.22);
+  --landing-glow-b: rgba(34,211,238,.14);
+  --landing-grid: rgba(255,255,255,.035);
+  --landing-mask: #000;
+  --landing-status-tint: 12%;
+  --landing-ease: cubic-bezier(.2,0,0,1);
+  font-family: 'InterVariable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: 'calt', 'kern', 'liga', 'ss03';
+  line-height: 1.6;
+}
+html:not(.dark) .signal-landing {
+  --landing-pill-bg: #0b0c0f;
+  --landing-pill-ink: #ffffff;
+  --landing-data: #0e7490;
+  --landing-beat-start: #4f4fe6;
+  --landing-glow-a: rgba(79,79,230,.10);
+  --landing-glow-b: rgba(8,145,178,.08);
+  --landing-grid: rgba(11,12,15,.04);
+  --landing-status-tint: 6%;
+}
+.signal-landing .font-mono {
+  font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  font-feature-settings: normal;
+}
+.signal-landing :is(button, a, input) { transition-timing-function: var(--landing-ease); }
+.signal-landing :focus-visible { outline: 2px solid var(--t-accent); outline-offset: 4px; }
+/* ── Brand v2.1 "Signal with light" ── */
+
+/* Primary: the white pill gives off light. It lifts, an indigo and cyan glow comes up beneath it, a shine
+   crosses it once and the arrow steps forward. The fill never changes colour. */
+.signal-landing {
+  --landing-btn-glow: -14px 10px 34px -8px rgba(124,124,255,.85), 14px 10px 34px -8px rgba(34,211,238,.65), 0 0 0 1px rgba(255,255,255,.9);
+  --landing-shine: rgba(124,124,255,.30);
+  --landing-ghost-edge: rgba(255,255,255,.34);
+  --landing-ghost-light: rgba(124,124,255,.30);
+  --landing-light-a: rgba(124,124,255,.12);
+  --landing-light-b: rgba(34,211,238,.075);
+  --landing-grain: .045;
+}
+html:not(.dark) .signal-landing {
+  --landing-btn-glow: -14px 10px 34px -8px rgba(79,79,230,.42), 14px 10px 34px -8px rgba(14,116,144,.32);
+  --landing-shine: rgba(255,255,255,.22);
+  --landing-ghost-edge: rgba(11,12,15,.32);
+  --landing-ghost-light: rgba(79,79,230,.14);
+  --landing-light-a: rgba(79,79,230,.05);
+  --landing-light-b: rgba(8,145,178,.04);
+  --landing-grain: 0;
+}
+.signal-landing .signal-pill {
+  position: relative; overflow: hidden;
+  background: var(--landing-pill-bg);
+  color: var(--landing-pill-ink);
+  border-radius: 9999px;
+  box-shadow: none;
+  transition: transform 180ms var(--landing-ease), box-shadow 300ms var(--landing-ease), opacity 150ms var(--landing-ease);
+}
+.signal-landing .signal-pill::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(110deg, transparent 38%, var(--landing-shine) 50%, transparent 62%) 130% 0 / 260% 100% no-repeat;
+}
+.signal-landing .signal-pill:not(:disabled):hover { transform: translateY(-1px); box-shadow: var(--landing-btn-glow); }
+.signal-landing .signal-pill:not(:disabled):hover::after { background-position: -30% 0; transition: background-position 900ms var(--landing-ease); }
+.signal-landing .signal-pill:not(:disabled):active { transform: scale(.98); }
+.signal-pill-arrow { width: 16px; height: 16px; transition: transform 180ms var(--landing-ease); }
+.signal-pill:hover .signal-pill-arrow { transform: translateX(3px); }
+
+/* Secondary: the edge brightens, it lifts, and a soft light follows the cursor inside it. */
+.signal-landing .signal-ghost {
+  position: relative; isolation: isolate; overflow: hidden;
+  transition: transform 180ms var(--landing-ease), border-color 180ms var(--landing-ease), color 150ms var(--landing-ease);
+}
+.signal-landing .signal-ghost::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(110px circle at var(--mx, 50%) var(--my, 50%), var(--landing-ghost-light), transparent 70%);
+  transition: opacity 200ms var(--landing-ease);
+}
+.signal-landing .signal-ghost:hover { transform: translateY(-1px); border-color: var(--landing-ghost-edge); }
+.signal-landing .signal-ghost:hover::before { opacity: 1; }
+.signal-landing .signal-ghost:active { transform: scale(.98); }
+.signal-ghost .lucide-arrow-down, .signal-ghost .lucide-arrow-right { transition: transform 180ms var(--landing-ease); }
+.signal-ghost:hover .lucide-arrow-down { transform: translateY(2px); }
+.signal-ghost:hover .lucide-arrow-right { transform: translateX(3px); }
+
+/* Film grain over the whole page, dark only. The black stays black; it just stops looking flat. */
+.signal-landing::after {
+  content: ''; position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: var(--landing-grain);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* One soft light per section, drifting slowly, alternating indigo from the left and cyan from the right.
+   The problem section has its own status light. The light fades to nothing at its own edges, so no seams. */
+.signal-section:not(#problem)::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; top: 0; left: -300px; width: 1000px; height: min(100%, 720px);
+  background: radial-gradient(closest-side, var(--landing-light-a), transparent);
+  animation: signal-drift 28s ease-in-out infinite alternate;
+}
+.signal-section:not(#problem):nth-of-type(odd)::before { left: auto; right: -300px; background: radial-gradient(closest-side, var(--landing-light-b), transparent); }
+@keyframes signal-drift { to { transform: translate(90px, 50px) scale(1.12); } }
+
+.signal-hero::before, .signal-hero::after {
+  content: ''; position: absolute; pointer-events: none; z-index: -1;
+}
+.signal-hero::before {
+  inset: -10% -10% auto; height: 700px;
+  background: radial-gradient(40% 50% at 30% 30%, var(--landing-glow-a), transparent 70%), radial-gradient(35% 45% at 70% 40%, var(--landing-glow-b), transparent 70%);
+  animation: signal-drift 28s ease-in-out infinite alternate;
+}
+
+/* Section headings rise and come into focus word by word, once. */
+.signal-word { display: inline-block; }
+@media (prefers-reduced-motion: no-preference) {
+  .signal-words[data-in="false"] .signal-word { opacity: 0; }
+  .signal-words[data-in="true"] .signal-word { animation: signal-word 700ms var(--landing-ease) calc(var(--i) * 45ms) both; }
+}
+@keyframes signal-word { from { opacity: 0; transform: translateY(.45em); filter: blur(8px); } }
+.signal-hero::after {
+  inset: 0;
+  background-image: linear-gradient(var(--landing-grid) 1px, transparent 1px), linear-gradient(90deg, var(--landing-grid) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(70% 55% at 50% 15%, var(--landing-mask), transparent);
+}
+.signal-ecg {
+  --line-strong: var(--t-border-strong); --accent: var(--landing-beat-start); --data: var(--landing-data);
+  width: 100%; height: 120px; display: block; margin-top: 48px;
+}
+.signal-ecg-base { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }
+.signal-ecg-beat {
+  fill: none; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 90 910;
+  animation: signal-beat 3.2s linear infinite;
+  filter: drop-shadow(0 0 6px var(--data));
+}
+@keyframes signal-beat { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+.signal-sweep { position: relative; overflow: hidden; }
+.signal-sweep::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--landing-data) 22%, transparent), transparent);
+  transform: translateX(-100%); animation: signal-sweep 2.6s var(--landing-ease) infinite;
+}
+@keyframes signal-sweep { 60%,100% { transform: translateX(100%); } }
+.signal-flag {
+  background: color-mix(in srgb, currentColor var(--landing-status-tint), var(--t-bg));
+  border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
+}
+.signal-landing .signal-number { font-variant-numeric: tabular-nums; letter-spacing: 0; }
+
+/* The evidence-heavy benefit gets the full row, so it never leaves an empty column. */
+.signal-risk-mock > ul { display: grid; gap: 0; }
+.signal-risk-mock > ul > li { border: 0; border-top: 1px solid var(--t-border); }
+@media (min-width: 1024px) {
+  .signal-pillar-risk { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .signal-pillar-risk > :first-child { max-width: 720px; }
+  .signal-risk-mock > ul { grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: start; gap: 12px; padding: 12px; }
+  .signal-risk-mock > ul > li { grid-column: span 2; border: 1px solid var(--t-border); border-radius: 8px; }
+  .signal-risk-mock > ul > li:nth-last-child(-n+2) { grid-column: span 3; }
+}
+
+/* ── The problem: the page's focal point ───────────────────────────────────────────────────────────
+   Warm status light behind the four problems, calm indigo behind the list they resolve into.
+   Status colours appear only on the flags themselves and as the light around them. */
+.signal-landing #problem {
+  --problem-glow-risk: color-mix(in srgb, var(--t-danger) 18%, transparent);
+  --problem-glow-stale: color-mix(in srgb, var(--t-warning-fill) 11%, transparent);
+  --problem-glow-calm: color-mix(in srgb, var(--t-accent) 18%, transparent);
+  --problem-card: color-mix(in srgb, var(--t-surface) 78%, transparent);
+  --problem-dot: color-mix(in srgb, var(--t-text) 9%, transparent);
+  --problem-stage-glow: 24%;
+  --problem-lift: 0 1px 0 rgba(255,255,255,.04) inset, 0 18px 40px -12px rgba(0,0,0,.6);
+  position: relative; isolation: isolate; overflow: clip;
+  padding-block: 104px 96px;
+}
+html:not(.dark) .signal-landing #problem {
+  --problem-glow-risk: color-mix(in srgb, var(--t-danger) 6%, transparent);
+  --problem-glow-stale: color-mix(in srgb, var(--t-warning-fill) 8%, transparent);
+  --problem-glow-calm: color-mix(in srgb, var(--t-accent) 6%, transparent);
+  --problem-card: color-mix(in srgb, var(--t-surface) 86%, transparent);
+  --problem-dot: color-mix(in srgb, var(--t-text) 11%, transparent);
+  --problem-stage-glow: 11%;
+  --problem-lift: 0 1px 2px rgba(11,12,15,.05), 0 14px 32px -12px rgba(11,12,15,.14);
+}
+.signal-landing #problem::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(34% 26% at 24% 30%, var(--problem-glow-stale), transparent 72%),
+    radial-gradient(40% 30% at 70% 44%, var(--problem-glow-risk), transparent 72%),
+    radial-gradient(30% 22% at 30% 58%, var(--problem-glow-risk), transparent 72%),
+    radial-gradient(50% 18% at 50% 84%, var(--problem-glow-calm), transparent 72%);
+}
+
+.signal-problem-heading { max-width: 900px; }
+.signal-problem-title { margin-top: 16px; font-size: clamp(38px, 5.4vw, 64px); line-height: 1.08; font-weight: 600; letter-spacing: 0; color: var(--t-text); text-wrap: balance; }
+.signal-problem-title > span { display: block; }
+
+/* Text on top, the scene below bleeding out of the card's bottom edge. Subgrid keeps scenes level across a row. */
+.signal-problem-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 56px; }
+/* Lit cards (brand v2.1): each card glows in the colour of its flag. A lamp line along the top, a 1px edge
+   light and a wash from the top-left corner. Rest → lit as it scrolls in → brighter under the cursor,
+   with the light following the pointer. Strengths are capped: past them the glow beats the words. */
+@property --lit-wash { syntax: '<number>'; inherits: true; initial-value: 5; }
+@property --lit-edge { syntax: '<number>'; inherits: true; initial-value: .25; }
+.signal-problem-card {
+  --tone: var(--t-danger); --tone-text: var(--t-danger); --lit-k: 1;
+  --lit-wash: 5; --lit-edge: .25;
+  position: relative; grid-row: span 2; display: grid; grid-template-rows: subgrid; row-gap: 0;
+  min-width: 0; overflow: hidden; border-radius: 16px;
+  background: var(--problem-card); box-shadow: inset 0 0 0 1px var(--t-border-strong), var(--t-shadow-sm);
+  transition: --lit-wash 900ms var(--landing-ease) var(--story-delay, 0ms), --lit-edge 900ms var(--landing-ease) var(--story-delay, 0ms);
+}
+html:not(.dark) .signal-problem-card { --lit-k: .5; }
+.signal-problem-card[data-tone="stale"] { --tone: var(--t-warning-fill); --tone-text: var(--t-warning); }
+.signal-problem-card[data-tone="ok"] { --tone: var(--landing-data); --tone-text: var(--landing-data); }
+.signal-problem-card[data-seen="true"] { --lit-wash: 13; --lit-edge: .8; }
+.signal-problem-card:hover { --lit-wash: 20; --lit-edge: 1; transition-duration: 300ms; transition-delay: 0ms; }
+.signal-problem-card::before {
+  content: ''; position: absolute; inset: 0; z-index: 2; border-radius: inherit; padding: 1px; pointer-events: none; opacity: var(--lit-edge);
+  background: radial-gradient(420px circle at var(--mx, 18%) var(--my, 0%), var(--tone), transparent 65%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+}
+.signal-problem-card::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(620px circle at var(--mx, 18%) var(--my, 0%), color-mix(in srgb, var(--tone) calc(var(--lit-wash) * var(--lit-k) * 1%), transparent), transparent 70%);
+}
+.signal-problem-card > :is(.signal-problem-text, .signal-vignette) { position: relative; z-index: 1; }
+.signal-problem-lamp {
+  position: absolute; z-index: 2; top: 0; left: 14%; right: 14%; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--tone), transparent);
+  opacity: 0; transform: scaleX(.2);
+  transition: transform 1100ms var(--landing-ease) var(--story-delay, 0ms), opacity 700ms var(--landing-ease) var(--story-delay, 0ms);
+}
+.signal-problem-lamp::after { content: ''; position: absolute; left: 10%; right: 10%; top: -10px; height: 26px; background: radial-gradient(closest-side, color-mix(in srgb, var(--tone) 45%, transparent), transparent); }
+.signal-problem-card[data-seen="true"] .signal-problem-lamp { opacity: 1; transform: none; }
+.signal-problem-tag {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  font: 500 11px/1.4 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-feature-settings: normal;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--tone-text);
+}
+.signal-problem-tag::before { content: ''; width: 6px; height: 6px; flex: none; border-radius: 50%; background: currentColor; }
+.signal-problem-card[data-seen="true"] .signal-problem-tag::before { animation: signal-ping 1.8s var(--landing-ease) var(--story-delay, 0ms) 1; }
+@keyframes signal-ping { from { box-shadow: 0 0 0 0 currentColor; } to { box-shadow: 0 0 0 10px transparent; } }
+.signal-problem-text { padding: 28px 32px 0; }
+.signal-problem-line { font-size: 22px; line-height: 1.4; font-weight: 560; letter-spacing: 0; color: var(--t-text); text-wrap: pretty; }
+.signal-vignette { position: relative; isolation: isolate; height: 264px; margin-top: 24px; padding: 0 32px; display: flex; flex-direction: column; overflow: hidden; }
+.signal-vignette::before {
+  content: ''; position: absolute; inset: 0; z-index: -2; pointer-events: none;
+  background-image: radial-gradient(var(--problem-dot) 1px, transparent 1.4px); background-size: 14px 14px;
+  mask-image: linear-gradient(to bottom, transparent, var(--landing-mask) 45%);
+}
+.signal-stage-glow {
+  position: absolute; z-index: -1; left: 50%; top: 58%; width: 520px; height: 300px; margin: -150px 0 0 -260px; pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--tone) var(--problem-stage-glow), transparent), transparent);
+}
+
+/* Scene parts shared by the mocks. */
+.signal-mock {
+  flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; padding: 16px 18px 0;
+  border: 1px solid var(--t-border-strong); border-bottom: 0; border-radius: 12px 12px 0 0;
+  background: var(--t-bg); box-shadow: var(--problem-lift); font-size: 13px; line-height: 1.4;
+}
+.signal-mock-head { display: flex; align-items: center; gap: 10px; min-width: 0; font-weight: 500; color: var(--t-text); }
+.signal-mock-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.signal-mock-glyph { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 7px; background: var(--t-surface-2); border: 1px solid var(--t-border); color: var(--t-text-muted); }
+.signal-mock-glyph svg { width: 14px; height: 14px; }
+.signal-mock-meta { flex: none; width: 15px; height: 15px; color: var(--t-text-muted); }
+.signal-mock-aside { flex: none; font-size: 12px; font-weight: 400; color: var(--t-text-muted); }
+.signal-mock-flags { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; }
+.signal-mono, .signal-pflag-evidence, .signal-branch, .signal-env-meta, .signal-dupe-repo, .signal-prow-repo, .signal-prow-last, .signal-hour span {
+  font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-feature-settings: normal;
+}
+.signal-mono { font-size: 12px; }
+
+/* Health flag: icon, label, evidence in mono. Fill is the status colour at the canvas tint. */
+.signal-pflag {
+  --fc: var(--t-danger); --ff: var(--t-danger);
+  display: inline-grid; grid-template-columns: 14px auto; align-items: center; column-gap: 7px; row-gap: 2px;
+  width: fit-content; max-width: 100%; padding: 5px 10px 5px 8px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--fc);
+  background: color-mix(in srgb, var(--ff) var(--t-tint-status), var(--t-bg));
+  border: 1px solid color-mix(in srgb, var(--ff) 34%, transparent);
+}
+.signal-pflag[data-tone="stale"] { --fc: var(--t-warning); --ff: var(--t-warning-fill); }
+.signal-pflag[data-tone="ok"] { --fc: var(--t-success); --ff: var(--t-success); }
+.signal-pflag > svg { width: 14px; height: 14px; }
+.signal-pflag-evidence { grid-column: 2; font-size: 11.5px; font-weight: 400; color: var(--t-text-muted); overflow-wrap: anywhere; }
+
+/* 1 · Duplicates settle into one stack. */
+.signal-scene { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; padding-bottom: 8px; }
+.signal-dupe-stack { position: relative; width: min(100%, 460px); height: 142px; }
+.signal-dupe {
+  position: absolute; left: calc(var(--i) * 20px); right: calc((2 - var(--i)) * 20px); top: calc(var(--i) * 41px); height: 60px;
+  display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; column-gap: 10px; row-gap: 4px; align-content: start; padding: 11px 14px;
+  border: 1px solid var(--t-border-strong); border-radius: 10px; background: var(--t-bg); box-shadow: var(--problem-lift); font-size: 14px; line-height: 18px;
+}
+.signal-dupe-icon { width: 16px; height: 16px; color: var(--t-text-muted); }
+.signal-dupe-name { font-weight: 500; color: var(--t-text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.signal-dupe-team { padding: 0 7px; border: 1px solid var(--t-border-strong); border-radius: 999px; font-size: 11px; line-height: 17px; color: var(--t-text-muted); }
+.signal-dupe:not(:last-child) .signal-dupe-repo { opacity: 0; }
+.signal-dupe-repo { grid-column: 2 / -1; font-size: 11px; line-height: 15px; color: var(--t-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 2 · The owner leaves. */
+.signal-kv { display: grid; border: 1px solid var(--t-border); border-radius: 8px; background: var(--t-surface); }
+.signal-owner { display: flex; align-items: center; gap: 10px; min-width: 0; min-height: 44px; padding: 8px 12px; }
+.signal-owner + .signal-owner { border-top: 1px solid var(--t-border); }
+.signal-owner-none { color: var(--t-text-muted); }
+.signal-owner-label { width: 72px; flex: none; font-size: 12px; color: var(--t-text-muted); }
+.signal-avatar { position: relative; flex: none; display: grid; place-items: center; width: 26px; height: 26px; border: 1px dashed var(--t-border-strong); border-radius: 50%; }
+.signal-avatar-fill {
+  position: absolute; inset: -1px; display: grid; place-items: center; border-radius: 50%; font-size: 10px; font-weight: 600; color: var(--t-text);
+  background: var(--t-p-violet-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--t-p-violet) 55%, transparent);
+  opacity: 0; transform: scale(.6);
+}
+.signal-owner-name { position: relative; min-width: 0; color: var(--t-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.signal-strike { position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; margin-top: -1px; background: var(--t-text-muted); transform-origin: left center; }
+
+/* 3 · A secret file in the repo. */
+.signal-branch { flex: none; padding: 1px 7px; border: 1px solid var(--t-border-strong); border-radius: 6px; font-size: 11px; font-weight: 400; color: var(--t-text-muted); }
+.signal-files { position: relative; overflow: hidden; margin-inline: -6px; }
+.signal-files ul { display: grid; gap: 2px; }
+.signal-files li { position: relative; display: flex; align-items: center; gap: 9px; height: 26px; padding: 0 8px; border-radius: 6px; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; color: var(--t-text-muted); }
+.signal-files li > svg { width: 14px; height: 14px; flex: none; }
+.signal-env-meta { margin-left: auto; font-size: 11px; }
+.signal-env-hit { position: absolute; inset: 0; display: flex; align-items: center; gap: 9px; padding: 0 8px; border-radius: 6px; color: var(--t-danger); background: var(--t-danger-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--t-danger) 30%, transparent); }
+.signal-env-hit > svg { width: 14px; height: 14px; flex: none; }
+.signal-scan { position: absolute; inset: 0; pointer-events: none; opacity: 0; transform: translateX(100%); background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--landing-data) 22%, transparent) 60%, transparent); }
+
+/* 4 · The meeting gives its slot to the portfolio. */
+.signal-day { position: relative; }
+.signal-hour { height: 42px; border-top: 1px solid var(--t-border); }
+.signal-hour span { display: block; padding-top: 3px; font-size: 10.5px; color: var(--t-text-muted); }
+.signal-slot { position: absolute; left: 52px; right: 0; top: 4px; height: 80px; display: flex; flex-direction: column; justify-content: center; gap: 4px; min-width: 0; padding: 8px 12px; border-radius: 8px; }
+.signal-meeting { border: 1px solid var(--t-border-strong); background: var(--t-surface-3); opacity: 0; transform: translateX(-16px); }
+.signal-meeting-title { font-weight: 500; color: var(--t-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.signal-meeting-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--t-text-muted); }
+.signal-faces { display: flex; }
+.signal-faces span { width: 14px; height: 14px; border-radius: 50%; background: var(--t-surface-2); box-shadow: 0 0 0 1.5px var(--t-surface-3), inset 0 0 0 1px var(--t-border-strong); }
+.signal-faces span + span { margin-left: -4px; }
+.signal-portfolio-slot { border: 1px solid color-mix(in srgb, var(--t-accent) 34%, transparent); background: var(--t-accent-soft); box-shadow: inset 3px 0 0 var(--t-accent); }
+.signal-portfolio-head { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--t-text); }
+.signal-portfolio-head > svg { width: 14px; height: 14px; color: var(--t-accent); }
+.signal-portfolio-head .signal-pflag { margin-left: auto; padding-block: 1px; font-size: 12px; }
+.signal-portfolio-line { font-size: 12.5px; color: var(--t-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.signal-problem-caption { margin-top: 16px; text-align: center; font-size: 12px; color: var(--t-text-muted); }
+
+/* The payoff: the closing line, then the same four problems as four calm rows. */
+.signal-problem-close { margin: 112px auto 0; max-width: 900px; text-align: center; }
+.signal-problem-close p { margin-inline: auto; font-weight: 600; letter-spacing: 0; color: var(--t-text); }
+/* The pair: a quiet first line that clears the reader, then the gap itself, big, lit and underlined. */
+.signal-close-a { display: block; font-size: clamp(22px, 2.6vw, 32px); line-height: 1.3; font-weight: 500; color: var(--t-text-muted); }
+.signal-close-b {
+  position: relative; display: inline-block; margin-top: 12px; padding-bottom: 14px;
+  font-size: clamp(42px, 6vw, 76px); line-height: 1.05; color: var(--t-text);
+  text-shadow: 0 0 44px color-mix(in srgb, var(--t-accent) 38%, transparent);
+}
+html:not(.dark) .signal-close-b { text-shadow: none; }
+.signal-close-b::after {
+  content: ''; position: absolute; left: 4%; right: 4%; bottom: 0; height: 3px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--t-accent), var(--landing-data)); box-shadow: 0 0 18px color-mix(in srgb, var(--t-accent) 60%, transparent);
+}
+
+/* Numbers strip: a short lit line above each figure and a soft glow behind the figure itself. */
+.signal-stat::before { content: ''; display: block; width: 40px; height: 2px; margin-bottom: 18px; border-radius: 2px; background: linear-gradient(90deg, var(--t-accent), var(--landing-data)); box-shadow: 0 0 12px color-mix(in srgb, var(--t-accent) 55%, transparent); }
+.signal-stat .signal-number { text-shadow: 0 0 30px color-mix(in srgb, var(--t-accent) 42%, transparent); }
+html:not(.dark) .signal-stat .signal-number { text-shadow: none; }
+
+/* How it works: the optional steps after the list exists, dashed so they read as "when you're ready". */
+.signal-later-step { min-width: 0; padding: 16px 18px; border: 1px dashed var(--t-border-strong); border-radius: 12px; background: color-mix(in srgb, var(--t-surface) 55%, transparent); }
+.signal-plist {
+  position: relative; max-width: 920px; margin: 48px auto 0; overflow: hidden;
+  border: 1px solid var(--t-border-strong); border-radius: 16px; background: var(--t-bg); box-shadow: var(--problem-lift);
+}
+.signal-plist-head { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 14px 20px; border-bottom: 1px solid var(--t-border); background: var(--t-surface); }
+.signal-plist-title { font-size: 15px; font-weight: 500; color: var(--t-text); }
+.signal-plist-count { font-size: 12px; color: var(--t-text-muted); font-variant-numeric: tabular-nums; }
+.signal-plist-sample { margin-left: auto; font-size: 12px; color: var(--t-text-muted); }
+.signal-prow {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.15fr) 128px; align-items: center; gap: 16px;
+  padding: 14px 20px; background: var(--t-bg);
+}
+.signal-prow + .signal-prow { border-top: 1px solid var(--t-border); }
+.signal-prow-glyph { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--t-border); background: var(--t-surface-2); color: var(--t-text-muted); }
+.signal-prow-glyph svg { width: 16px; height: 16px; }
+.signal-prow-app { display: grid; min-width: 0; }
+.signal-prow-name { font-size: 15px; font-weight: 500; color: var(--t-text); }
+.signal-prow-repo { font-size: 11.5px; color: var(--t-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.signal-prow-last { justify-self: end; font-size: 11.5px; color: var(--t-text-muted); white-space: nowrap; }
+
+/* One generic one-shot: each part declares its start (--s-o, --s-t), duration and delay; its final frame is its resting style. */
+@media (prefers-reduced-motion: no-preference) {
+  .signal-landing #problem::before { opacity: 0; transition: opacity 1600ms var(--landing-ease); }
+  .signal-landing #problem:has(.signal-story[data-lit="true"])::before { opacity: 1; }
+  :is([data-seen="false"] .p-anim, .p-anim[data-seen="false"]) { opacity: var(--s-o); transform: var(--s-t); }
+  :is([data-seen="true"] .p-anim, .p-anim[data-seen="true"]) {
+    animation: problem-from var(--dur, 900ms) var(--landing-ease) calc(var(--story-delay, 0ms) + var(--d, 0ms)) both;
+  }
+  .signal-problem-close[data-seen="false"] .signal-close-b::after { transform: scaleX(0); }
+  .signal-problem-close[data-seen="true"] .signal-close-b::after { animation: signal-underline 900ms var(--landing-ease) 1100ms both; }
+  .signal-problem-card[data-seen="false"] .signal-scan { opacity: 1; transform: translateX(-100%); }
+  .signal-problem-card[data-seen="true"] .signal-scan { animation: problem-scan 1000ms var(--landing-ease) var(--story-delay) both; }
+}
+@keyframes signal-underline { from { transform: scaleX(0); } }
+@keyframes problem-from { from { opacity: var(--s-o); transform: var(--s-t); } }
+@keyframes problem-scan { 0% { opacity: 1; transform: translateX(-100%); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateX(100%); } }
+
+@media (max-width: 1023px) {
+  .signal-problem-text { padding: 24px 24px 0; }
+  .signal-problem-line { font-size: 20px; }
+  .signal-vignette { padding-inline: 24px; }
+  .signal-prow { grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.2fr); }
+  .signal-prow-last { display: none; }
+}
+@media (max-width: 639px) {
+  .signal-landing #problem { padding-block: 72px; }
+  .signal-problem-title > span { display: inline; }
+  .signal-problem-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 36px; }
+  .signal-problem-text { padding: 22px 20px 0; }
+  .signal-vignette { height: auto; min-height: 236px; margin-top: 20px; padding-inline: 16px; }
+  .signal-mock { padding: 14px 14px 18px; }
+  .signal-scene { padding-block: 8px 20px; }
+  .signal-problem-close { margin-top: 72px; text-align: left; }
+  .signal-problem-close p { text-wrap: pretty; }
+  .signal-close-b { font-size: 40px; }
+  .signal-plist { margin-top: 32px; }
+  .signal-plist-head { padding: 12px 16px; }
+  .signal-plist-sample { margin-left: 0; flex-basis: 100%; }
+  .signal-prow { grid-template-columns: 34px minmax(0, 1fr); row-gap: 10px; padding: 14px 16px; }
+  .signal-prow .signal-pflag { grid-column: 2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .signal-landing *, .signal-landing *::before, .signal-landing *::after {
+    animation: none !important; transition: none !important; scroll-behavior: auto !important;
+  }
+  .signal-ecg-beat { stroke-dasharray: none; stroke-dashoffset: 0; opacity: .9; }
+  .signal-sweep::after { display: none; }
+  .signal-problem-card { --lit-wash: 13; --lit-edge: .8; }
+  .signal-problem-lamp { opacity: 1; transform: none; }
+}

@@ -1,0 +1,403 @@
+@import 'tailwindcss';
+
+/* Dark mode is a class on <html>; src/components/useTheme.ts sets it from settings.theme. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   1 · Raw palette. Light on :root, dark on .dark. Components never read these
+   directly; they use the semantic utilities from the @theme block below.
+   ───────────────────────────────────────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+
+  --t-bg: #FFFFFF;
+  --t-surface: #F6F7F9;
+  --t-surface-2: #EEF0F3;
+  --t-surface-3: #E5E7EB;
+  --t-border: rgba(11,12,15,0.08);
+  --t-border-strong: rgba(11,12,15,0.16);
+  --t-text: #0B0C0F;
+  --t-text-muted: #5D606B;
+  --t-text-faint: #8B8E98;
+
+  --t-accent: #4F4FE6;
+  --t-accent-hover: color-mix(in srgb, var(--t-accent) 90%, var(--t-text));
+  --t-accent-soft: color-mix(in srgb, var(--t-accent) 12%, var(--t-bg));
+  --t-accent-ink: #FFFFFF;
+
+  --t-danger: #D12A2A;
+  --t-danger-hover: color-mix(in srgb, var(--t-danger) 88%, var(--t-bg));
+  --t-danger-soft: color-mix(in srgb, var(--t-danger) var(--t-tint-status), var(--t-bg));
+  --t-success: #0F7A4F;
+  --t-success-soft: color-mix(in srgb, var(--t-success) var(--t-tint-status), var(--t-bg));
+  --t-warning: #A15C00;
+  --t-warning-fill: #C98A10;
+  --t-warning-soft: color-mix(in srgb, var(--t-warning-fill) var(--t-tint-status), var(--t-bg));
+  --t-tint-status: 6%;
+
+  --t-overlay: rgba(11,12,15,0.42);
+  --t-toast: var(--t-surface-3);
+  --t-toast-ink: var(--t-text);
+
+  --t-p-slate: #52657D;
+  --t-p-slate-soft: color-mix(in srgb, var(--t-p-slate) 30%, var(--t-bg));
+  --t-p-violet: #856FD1;
+  --t-p-violet-soft: color-mix(in srgb, var(--t-p-violet) 30%, var(--t-bg));
+  --t-p-blue: #265A9B;
+  --t-p-blue-soft: color-mix(in srgb, var(--t-p-blue) 30%, var(--t-bg));
+  --t-p-teal: #099297;
+  --t-p-teal-soft: color-mix(in srgb, var(--t-p-teal) 30%, var(--t-bg));
+  --t-p-green: #126735;
+  --t-p-green-soft: color-mix(in srgb, var(--t-p-green) 30%, var(--t-bg));
+  --t-p-amber: #A8732C;
+  --t-p-amber-soft: color-mix(in srgb, var(--t-p-amber) 30%, var(--t-bg));
+  --t-p-rose: #883D4E;
+  --t-p-rose-soft: color-mix(in srgb, var(--t-p-rose) 30%, var(--t-bg));
+
+  --t-shadow-xs: 0 1px 2px rgba(11,12,15,.05), 0 8px 24px rgba(11,12,15,.06);
+  --t-shadow-sm: 0 1px 2px rgba(11,12,15,.05), 0 8px 24px rgba(11,12,15,.06);
+  --t-shadow-md: 0 1px 2px rgba(11,12,15,.05), 0 8px 24px rgba(11,12,15,.06);
+  --t-shadow-lg: 0 1px 2px rgba(11,12,15,.05), 0 8px 24px rgba(11,12,15,.06);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --t-bg: #0B0C12;
+  --t-surface: #12131A;
+  --t-surface-2: #181A22;
+  --t-surface-3: #1F2129;
+  --t-border: rgba(255,255,255,0.08);
+  --t-border-strong: rgba(255,255,255,0.14);
+  --t-text: #F4F5F7;
+  --t-text-muted: #9A9CA5;
+  --t-text-faint: #6B6E78;
+
+  --t-accent: #7C7CFF;
+  --t-accent-hover: color-mix(in srgb, var(--t-accent) 85%, white);
+  --t-accent-soft: color-mix(in srgb, var(--t-accent) 12%, var(--t-bg));
+  --t-accent-ink: #FFFFFF;
+
+  --t-danger: #FF5D5D;
+  --t-danger-hover: color-mix(in srgb, var(--t-danger) 88%, var(--t-bg));
+  --t-danger-soft: color-mix(in srgb, var(--t-danger) var(--t-tint-status), var(--t-bg));
+  --t-success: #3DDC97;
+  --t-success-soft: color-mix(in srgb, var(--t-success) var(--t-tint-status), var(--t-bg));
+  --t-warning: #F5B544;
+  --t-warning-fill: #F5B544;
+  --t-warning-soft: color-mix(in srgb, var(--t-warning-fill) var(--t-tint-status), var(--t-bg));
+  --t-tint-status: 12%;
+
+  --t-overlay: rgba(0,0,0,0.62);
+  --t-toast: var(--t-surface-3);
+  --t-toast-ink: var(--t-text);
+
+  --t-p-slate: #8497AF;
+  --t-p-slate-soft: color-mix(in srgb, var(--t-p-slate) 30%, var(--t-bg));
+  --t-p-violet: #9373F8;
+  --t-p-violet-soft: color-mix(in srgb, var(--t-p-violet) 30%, var(--t-bg));
+  --t-p-blue: #1163C0;
+  --t-p-blue-soft: color-mix(in srgb, var(--t-p-blue) 30%, var(--t-bg));
+  --t-p-teal: #25A39D;
+  --t-p-teal-soft: color-mix(in srgb, var(--t-p-teal) 30%, var(--t-bg));
+  --t-p-green: #197C3C;
+  --t-p-green-soft: color-mix(in srgb, var(--t-p-green) 30%, var(--t-bg));
+  --t-p-amber: #B68A26;
+  --t-p-amber-soft: color-mix(in srgb, var(--t-p-amber) 30%, var(--t-bg));
+  --t-p-rose: #C14371;
+  --t-p-rose-soft: color-mix(in srgb, var(--t-p-rose) 30%, var(--t-bg));
+
+  --t-shadow-xs: 0 1px 0 rgba(255,255,255,.04) inset, 0 8px 24px rgba(0,0,0,.35);
+  --t-shadow-sm: 0 1px 0 rgba(255,255,255,.04) inset, 0 8px 24px rgba(0,0,0,.35);
+  --t-shadow-md: 0 1px 0 rgba(255,255,255,.04) inset, 0 8px 24px rgba(0,0,0,.35);
+  --t-shadow-lg: 0 1px 0 rgba(255,255,255,.04) inset, 0 8px 24px rgba(0,0,0,.35);
+}
+
+/* Signal-only additions. v2 falls back to its own existing accent and ink tokens. */
+:root:not(.v2) {
+  --t-accent-strong: #4F4FE6;
+  --t-pill-bg: #0B0C0F;
+  --t-pill-ink: #FFFFFF;
+  --t-danger-ink: #FFFFFF;
+  --t-mark: #0B0C0F;
+  --t-mark-ink: #FFFFFF;
+  --t-btn-glow: -10px 8px 24px -8px rgba(79,79,230,.4), 10px 8px 24px -8px rgba(14,116,144,.3);
+  --t-btn-edge-hover: rgba(11,12,15,.32);
+}
+:root.dark:not(.v2) {
+  --t-accent-strong: #5B5BF0;
+  --t-pill-bg: #FFFFFF;
+  --t-pill-ink: #08090B;
+  --t-danger-ink: #08090B;
+  --t-mark: #7C7CFF;
+  --t-mark-ink: #08090B;
+  --t-btn-glow: -10px 8px 24px -8px rgba(124,124,255,.8), 10px 8px 24px -8px rgba(34,211,238,.6);
+  --t-btn-edge-hover: rgba(255,255,255,.28);
+}
+
+/* Brand v2.1: the white pill gives off light on hover and its fill never changes. Secondary brightens its edge. */
+[data-variant="primary"]:not(:disabled):hover { transform: translateY(-1px); box-shadow: var(--t-btn-glow); }
+[data-variant="secondary"]:not(:disabled):hover { border-color: var(--t-btn-edge-hover); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   2 · Design tokens → Tailwind utilities. `bg-surface`, `text-text-muted`,
+   `border-border`, `bg-accent-soft`, `bg-p-violet-soft`,
+   `shadow-md`, `rounded-lg` … all come from here. See docs/design.md.
+   ───────────────────────────────────────────────────────────────────────────── */
+@theme inline {
+  --font-sans: 'InterVariable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* Semantic colours */
+  --color-bg: var(--t-bg);
+  --color-surface: var(--t-surface);
+  --color-surface-2: var(--t-surface-2);
+  --color-surface-3: var(--t-surface-3);
+  --color-border: var(--t-border);
+  --color-border-strong: var(--t-border-strong);
+  --color-text: var(--t-text);
+  --color-text-muted: var(--t-text-muted);
+  --color-text-faint: var(--t-text-faint);
+  --color-accent: var(--t-accent);
+  --color-mark: var(--t-mark, var(--t-accent));
+  --color-accent-strong: var(--t-accent-strong, var(--t-accent));
+  --color-pill-bg: var(--t-pill-bg, var(--t-accent));
+  --color-pill-ink: var(--t-pill-ink, var(--t-accent-ink));
+  --color-danger-ink: var(--t-danger-ink, white);
+  --color-accent-hover: var(--t-accent-hover);
+  --color-accent-soft: var(--t-accent-soft);
+  --color-accent-ink: var(--t-accent-ink);
+  --color-danger: var(--t-danger);
+  --color-danger-hover: var(--t-danger-hover);
+  --color-danger-soft: var(--t-danger-soft);
+  --color-success: var(--t-success);
+  --color-success-soft: var(--t-success-soft);
+  --color-warning: var(--t-warning);
+  --color-warning-soft: var(--t-warning-soft);
+  --color-overlay: var(--t-overlay);
+  --color-toast: var(--t-toast);
+  --color-toast-ink: var(--t-toast-ink);
+
+  /* Project colours: dot + soft tint */
+  --color-p-slate: var(--t-p-slate);
+  --color-p-slate-soft: var(--t-p-slate-soft);
+  --color-p-violet: var(--t-p-violet);
+  --color-p-violet-soft: var(--t-p-violet-soft);
+  --color-p-blue: var(--t-p-blue);
+  --color-p-blue-soft: var(--t-p-blue-soft);
+  --color-p-teal: var(--t-p-teal);
+  --color-p-teal-soft: var(--t-p-teal-soft);
+  --color-p-green: var(--t-p-green);
+  --color-p-green-soft: var(--t-p-green-soft);
+  --color-p-amber: var(--t-p-amber);
+  --color-p-amber-soft: var(--t-p-amber-soft);
+  --color-p-rose: var(--t-p-rose);
+  --color-p-rose-soft: var(--t-p-rose-soft);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
+  --radius-2xl: 16px;
+
+  /* Shadows (flip with the theme) */
+  --shadow-xs: var(--t-shadow-xs);
+  --shadow-sm: var(--t-shadow-sm);
+  --shadow-md: var(--t-shadow-md);
+  --shadow-lg: var(--t-shadow-lg);
+
+  /* Type scale: 12–13px captions, 14px UI body */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.375rem;
+  --text-lg: 1rem;
+  --text-lg--line-height: 1.5rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.25rem;
+
+  /* Motion */
+  --ease-out-quart: cubic-bezier(0.2, 0, 0, 1);
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   3 · Base
+   ───────────────────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: var(--t-border-strong) transparent;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--t-border-strong) transparent;
+  }
+  body {
+    background-color: var(--t-bg);
+    color: var(--t-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    letter-spacing: 0;
+    font-feature-settings: "calt", "kern", "liga", "ss03";
+    /* No global tabular-nums: in Inter it also swaps in a wide tabular hyphen ("vibe - coded").
+       Figures opt in with the tabular-nums utility. */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overscroll-behavior-y: none;
+  }
+  ::selection {
+    background-color: var(--t-accent-soft);
+    color: var(--t-text);
+  }
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
+  button:disabled,
+  [role='button'][aria-disabled='true'] {
+    cursor: default;
+  }
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    letter-spacing: inherit;
+  }
+  h1,
+  h2,
+  h3 {
+    letter-spacing: 0.2px;
+    text-wrap: balance;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   4 · Utilities shared by the primitives
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Keyboard focus ring. Add to every interactive element. */
+@utility focus-ring {
+  outline: none;
+  &:focus-visible {
+    outline: 2px solid var(--t-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Text field chrome (Input, Textarea, Select). Sizes are added by the component. */
+@utility field {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--t-border-strong);
+  background-color: var(--t-surface);
+  color: var(--t-text);
+  outline: none;
+  transition:
+    border-color 150ms var(--ease-standard),
+    background-color 150ms var(--ease-standard);
+  &::placeholder {
+    color: var(--t-text-muted);
+    opacity: 0.85;
+  }
+  &:hover:not(:disabled):not(:focus) {
+    background-color: var(--t-surface-2);
+  }
+  &:focus-visible {
+    border-color: var(--t-accent);
+    outline: 2px solid var(--t-accent);
+    outline-offset: 2px;
+  }
+  &[aria-invalid='true'] {
+    border-color: var(--t-danger);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Loading placeholder shimmer */
+@utility skeleton {
+  border-radius: var(--radius-md);
+  background-color: var(--t-surface-2);
+  background-image: linear-gradient(90deg, var(--t-surface-2) 25%, var(--t-surface-3) 50%, var(--t-surface-2) 75%);
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Hide scrollbars but keep scrolling (horizontal chip rows, board columns) */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Thin hairline rule (use instead of 1px borders between stacked rows) */
+@utility hairline-b {
+  box-shadow: inset 0 -1px 0 var(--t-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Logo mark: the beat draws itself left to right (pathLength 100). It never rotates.
+   The gap is wider than the path, so an undrawn beat leaves no round-cap dot behind. */
+.tempo-mark-tick .mark-beat,
+.tempo-mark-loading .mark-beat {
+  stroke-dasharray: 100 200;
+}
+@keyframes tempo-beat-draw {
+  from { stroke-dashoffset: 101; }
+  to { stroke-dashoffset: 0; }
+}
+/* Loading: draw over 0–45%, hold to 80%, fade to 100%, then draw again. */
+@keyframes tempo-beat-loading {
+  0% { stroke-dashoffset: 101; opacity: 1; }
+  45% { stroke-dashoffset: 0; opacity: 1; }
+  80% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+.tempo-mark-tick .mark-beat {
+  animation: tempo-beat-draw 900ms cubic-bezier(0.2, 0, 0, 1) both;
+}
+.tempo-mark-loading .mark-beat {
+  animation: tempo-beat-loading 2.8s cubic-bezier(0.2, 0, 0, 1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tempo-mark-tick .mark-beat,
+  .tempo-mark-loading .mark-beat {
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
