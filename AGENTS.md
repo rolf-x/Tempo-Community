@@ -57,9 +57,12 @@ Your job: get this person a working Tempo on their own accounts, one step at a t
 4. **Dependencies:** `npm install`.
 
 ### Step 1: Supabase project
-- **The person creates the project** at supabase.com (free plan).
-- **Ask them for:** the Project URL (`https://<ref>.supabase.co`) and the anon public key (Project Settings → API).
-  Both are public. Remember them.
+- **The person creates the project** at supabase.com (free plan). The free plan allows two active projects per account.
+  If Supabase refuses a third, they pause or delete one first, or upgrade.
+- **Ask them for:**
+  - the Project URL, `https://<ref>.supabase.co`, where `<ref>` is the id in their dashboard's address;
+  - the anon public key, from Project Settings → API Keys. On newer projects it's under the **Legacy API keys** tab.
+  - Both are public. Remember them.
 - **Check:** `curl -s -o /dev/null -w '%{http_code}' https://<ref>.supabase.co/auth/v1/health -H "apikey: <anon>"`
   answers `200`.
 
@@ -71,8 +74,16 @@ Your job: get this person a working Tempo on their own accounts, one step at a t
   - **Check:** `supabase migration list` shows 0001 to 0023 both locally and remotely.
 - **Without the CLI:** the person pastes each file of `supabase/migrations/` into the SQL Editor, in order, and runs
   it. Give them the file list.
-- **Proof:** the person pastes `supabase/tests/rls.sql` into the SQL Editor and runs it. It must end with `RLS: all
-  checks passed`. If it stops with `FAIL: …`, read that line with them before going on.
+  - Quicker: copy them all, in order, to their clipboard (`cat supabase/migrations/*.sql | pbcopy` on a Mac), and they
+    paste and run them as one query.
+  - If the editor warns about destructive operations, they run it anyway: the project is new.
+  - **Check:** the editor says Success, with no error.
+- **Proof:** the person pastes `supabase/tests/rls.sql` into the SQL Editor and runs it.
+  - **If the editor offers to enable RLS on a table,** they choose **Run without RLS**. It's a temporary table the
+    script removes.
+  - **A failed check** stops with an error starting `FAIL: …`. Read that line with them before going on.
+  - **No error means every check passed.** The final `RLS: all checks passed` is a notice, which the editor may not
+    show.
 
 ### Step 3: Vercel project
 - **Import:** they fork the repo on GitHub, then in Vercel choose Add New → Project and import the fork. Or, with the
@@ -91,6 +102,8 @@ Your job: get this person a working Tempo on their own accounts, one step at a t
 - **Check:** `ls -l .tempo-setup/github-app.json` shows `-rw-------`. Don't open it.
 - **Install:** the person installs the App from `https://github.com/apps/<slug>/installations/new` on the account or
   organization whose repos Tempo should see.
+- **Expect one failed delivery:** the App's first webhook delivery, a ping, fails with 503 until step 6 sets the
+  variables. Tell them so they don't worry.
 - **If the helper can't be used**, walk them through the manual table in the README (step 4), field by field.
 
 ### Step 5: Sign-in settings in Supabase
@@ -102,7 +115,7 @@ Describe the setting, not only the menu path.)
 | **Authentication → Providers → GitHub** | On. Client ID = the App's client ID (from step 4); client secret = the App's (copy it to their clipboard with the pipe above). |
 | **Authentication → Providers → Email** | Off. |
 | **Authentication → URL Configuration** | Site URL `<address>`. Redirect URLs `<address>/**`, plus `http://localhost:5173/**` only if they'll develop locally. |
-| **Authentication → OAuth Server** | On; authorization path `/oauth/consent`; dynamic client registration on. |
+| **Authentication → OAuth Server** | On; authorization path `/oauth/consent`; dynamic client registration on (shown as **Allow Dynamic OAuth Apps**, with a risk notice to confirm). |
 | **Project Settings → JWT Keys** | Asymmetric signing keys, if the project still uses the legacy shared secret. |
 
 ### Step 6: Vercel variables, the server key, redeploy
@@ -124,7 +137,9 @@ Describe the setting, not only the menu path.)
   - `curl -s -o /dev/null -w '%{http_code}' -X POST <address>/api/github-webhook` → `401` (`503` means a variable is
     missing);
   - `curl -s <address>/.well-known/oauth-protected-resource/api/mcp` → JSON whose `authorization_servers` names
-    their Supabase URL.
+    their Supabase URL. `temporarily_unavailable` means the OAuth Server from step 5 is off.
+- **Check the GitHub sign-in setting** without the dashboard: `curl -s https://<ref>.supabase.co/auth/v1/settings -H
+  "apikey: <anon>"` shows `"github":true` under `external`.
 
 ### Step 7: Their address and contact email
 - **Nothing to edit by hand.** `index.html`'s link-preview tags hold `%VITE_SITE_URL%`, which Vite replaces at build
@@ -133,7 +148,9 @@ Describe the setting, not only the menu path.)
   `VITE_SITE_URL` was missing at build time: set it and redeploy.
 
 ### Step 8: Check it end to end, with the person
-1. **Sign in.** Open the address, sign in with GitHub, create a workspace and add a few repos.
+1. **Sign in.** Open the address, sign in with GitHub, create a workspace and add a few repos. Tempo guesses which repos
+   are apps. If one they want sits under **Not apps** (for example marked "Empty"), they open that list and click
+   **This is an app**.
 2. **Integrations.** **Settings → Integrations** says updates on every push are on (an owner or admin who connected
    GitHub turns them on).
 3. **A push.** Push a commit to one of those repos: within a minute, the app shows it.
@@ -144,6 +161,10 @@ Describe the setting, not only the menu path.)
 | What they see | Likely cause |
 |---|---|
 | Sign-in button errors in production | `VITE_GITHUB_APP_SLUG` or the Supabase variables missing at build time: set them and redeploy |
+| Sign-in shows `Unsupported provider: provider is not enabled` | The GitHub provider in Supabase is off or wasn't saved (step 5) |
+| `/.well-known/oauth-protected-resource/api/mcp` answers 503 `temporarily_unavailable` | Supabase's OAuth Server is off (step 5) |
+| The App's first webhook delivery (a ping) shows 503 | Expected when the App was made before the Vercel variables; later deliveries work |
+| Supabase won't create the project | The free plan allows two active projects per account: pause or delete one, or upgrade |
 | GitHub sends them back to Tempo without signing in, or loops | Supabase redirect URLs or Site URL don't match the address |
 | `503` with `not_configured` from `/api/github*` or `/api/mcp` | A server variable is missing or malformed (`GITHUB_TOKEN_KEY` must be base64 of 32 bytes) |
 | Webhook deliveries fail with 401 in the App's Advanced tab | `GITHUB_WEBHOOK_SECRET` differs from the App's webhook secret |

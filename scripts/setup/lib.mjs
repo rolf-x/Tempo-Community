@@ -181,10 +181,11 @@ export function readAppFile(root) {
 }
 
 /** What the helper may print about the new App: names and public ids, never a secret. */
-export function appSummary(app) {
+export function appSummary(app, { org } = {}) {
+  const settings = org ? `https://github.com/organizations/${org}/settings/apps/${app.slug}` : `https://github.com/settings/apps/${app.slug}`
   return [
     `Created the GitHub App "${app.slug}" (App ID ${app.id}, client ID ${app.client_id}).`,
-    ...(app.html_url ? [`Its settings: ${app.html_url}`] : []),
+    `Its settings: ${settings}`,
     `Keys saved to ${path.join(SETUP_DIR, APP_FILE)}; only your user can read it, and git ignores it.`,
     `Next: install it on the account or organization whose repos Tempo should see: https://github.com/apps/${app.slug}/installations/new`,
     'Then: node scripts/setup/vercel-env.mjs --site-url https://<your site> --supabase-url https://<ref>.supabase.co --anon-key <anon key> --contact-email <you@yourcompany.com>',

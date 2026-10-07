@@ -126,9 +126,11 @@ plain `https://<ref>.supabase.co` address. Other hosts or databases would mean p
 the App's keys.
 
 ### 1. Supabase project
-1. Create a project at [supabase.com](https://supabase.com) (the free plan is enough).
-2. In **Project Settings → API**, note the **Project URL** (`https://<ref>.supabase.co`) and the **anon public** key.
-   Tempo never needs the service-role key.
+1. Create a project at [supabase.com](https://supabase.com) (the free plan is enough). The free plan allows two active
+   projects per account: if you already have two, pause or delete one first.
+2. Note the **Project URL**, `https://<ref>.supabase.co`, where `<ref>` is the project id in your dashboard's address.
+3. In **Project Settings → API Keys**, note the **anon public** key. On newer projects it's under the **Legacy API
+   keys** tab. Tempo never needs the service-role or secret key.
 
 ### 2. Database
 Apply every file in `supabase/migrations/`, in order, 0001 to 0023. With the [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started):
@@ -139,11 +141,17 @@ supabase link --project-ref <ref>      # asks for your database password
 supabase db push
 ```
 
-Or paste each file into **SQL Editor** and run it, in order.
+Or use the **SQL Editor**: paste each file and run it, in order. You can also paste them all at once and run them as
+one query (on a Mac, `cat supabase/migrations/*.sql | pbcopy` copies them in order). If the editor warns about
+destructive operations, run it anyway: on a new project there's nothing to lose.
 
-Then paste `supabase/tests/rls.sql` into the SQL Editor and run it. It ends with **RLS: all checks passed** and rolls
-itself back, so it leaves nothing behind. `authz_negative.sql` and `mcp_edge_cases.sql` in the same folder are
-optional extra checks that run the same way.
+Then paste `supabase/tests/rls.sql` into the SQL Editor and run it.
+- **If the editor offers to enable RLS on a table,** choose **Run without RLS**. The table is a temporary one the script
+  removes.
+- **A failed check** stops with an error that starts `FAIL:`. With no error, every check passed. The script ends with
+  the notice **RLS: all checks passed**, which the editor may not show.
+- **It rolls itself back,** so it leaves nothing behind. `authz_negative.sql` and `mcp_edge_cases.sql` in the same
+  folder are optional extra checks that run the same way.
 
 ### 3. Vercel project
 1. Fork this repo, then in [Vercel](https://vercel.com) choose **Add New → Project** and import your fork (the free
@@ -167,6 +175,9 @@ node scripts/setup/github-app.mjs --domain https://your-tempo.vercel.app --supab
    secret is printed.
 4. **Install.** Install the App on the account or organization whose repos Tempo should see, from the link the helper
    prints.
+
+The App's first webhook delivery, a ping, fails with 503 because Vercel doesn't have the keys yet. That's expected;
+deliveries work once step 6 is done.
 
 **Or by hand.** Go to GitHub → Settings → Developer settings → GitHub Apps → **New GitHub App** (or the same page in
 your organization's settings) and fill it in:
@@ -196,7 +207,7 @@ After you create it:
 | Authentication → Providers → GitHub | On. Client ID and client secret: **the GitHub App's** (Tempo refreshes and revokes those tokens itself). |
 | Authentication → Providers → Email | Off. Tempo signs in with GitHub only. |
 | Authentication → URL Configuration | Site URL `https://your-tempo.vercel.app`. Redirect URLs `https://your-tempo.vercel.app/**` (plus `http://localhost:5173/**` for local development). |
-| Authentication → OAuth Server | On, with authorization path `/oauth/consent`, and **dynamic client registration** on. This is what lets Claude and other AI apps connect. |
+| Authentication → OAuth Server | On, with authorization path `/oauth/consent`, and **dynamic client registration** on (the dashboard calls it **Allow Dynamic OAuth Apps**). This is what lets Claude and other AI apps connect. |
 | Project Settings → JWT Keys | Asymmetric signing keys (recommended): the MCP server checks tokens against your project's published keys. |
 
 ### 6. Vercel variables
@@ -246,6 +257,10 @@ If you change either value later, deploy again.
 
 ### 8. Check it works
 - **Sign in.** Open your address, sign in with GitHub, create a workspace and add a few repos.
+  - If sign-in fails with "Unsupported provider: provider is not enabled", the GitHub provider in step 5 is off or wasn't
+    saved.
+  - Tempo guesses which repos are apps. To add one it filed under **Not apps** (for example one marked "Empty"), open
+    that list and click **This is an app**.
 - **Updates on every push.** **Settings → Integrations** should say they're on. Push a commit to one of those repos:
   its app shows the new commit within a minute.
 - **Each endpoint answers as expected:**
@@ -256,13 +271,16 @@ If you change either value later, deploy again.
   curl -s https://your-tempo.vercel.app/.well-known/oauth-protected-resource/api/mcp                    # JSON naming your Supabase
   ```
 
+  If the last one answers `temporarily_unavailable`, the OAuth Server in step 5 is off.
+
 - **Claude.** To connect it, open **Settings → Connect your AI**.
 
 Once your hosting has the values, delete `.tempo-setup/` or keep it somewhere safe: it holds the App's private key.
 
 ### Costs
 Everything runs on your own accounts:
-- **Supabase's free plan** covers a small team. Free projects pause after a week with no activity.
+- **Supabase's free plan** covers a small team. It allows two active projects per account, and free projects pause
+  after a week with no activity.
 - **Vercel's free Hobby plan** is for personal, non-commercial use. A company should use Vercel Pro.
 - **AI** is billed to your own Claude plan or API key.
 

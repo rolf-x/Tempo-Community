@@ -138,6 +138,11 @@ describe('the saved keys', () => {
     for (const secret of SECRETS) expect(printed).not.toContain(secret)
     expect(printed).toContain('tempo-acme')
   })
+
+  it('link to the App settings page, for an account or an organization', () => {
+    expect(appSummary(APP).join('\n')).toContain('Its settings: https://github.com/settings/apps/tempo-acme')
+    expect(appSummary(APP, { org: 'acme-labs' }).join('\n')).toContain('Its settings: https://github.com/organizations/acme-labs/settings/apps/tempo-acme')
+  })
 })
 
 describe('the Vercel variables', () => {

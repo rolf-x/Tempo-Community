@@ -67,7 +67,7 @@ const server = http.createServer(async (request, response) => {
     saveAppFile(ROOT, app, { replace: Boolean(options.replace) })
     send(200, '<!doctype html><meta charset="utf-8"><title>Done</title><body style="font:16px system-ui;margin:4rem auto;max-width:40rem">'
       + `<h1>GitHub App created</h1><p>Its keys are saved on your computer. Go back to the terminal for the next step.</p></body>`)
-    console.log(`\n${appSummary(app).join('\n')}\n`)
+    console.log(`\n${appSummary(app, { org: options.org }).join('\n')}\n`)
     finish(0)
   } catch (error) {
     send(500, 'Something went wrong. The terminal says what.')
